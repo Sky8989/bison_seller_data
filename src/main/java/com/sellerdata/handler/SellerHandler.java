@@ -1,6 +1,7 @@
 package com.sellerdata.handler;
 
 
+import com.sellerdata.pojo.vo.AmzSellerAccountVO;
 import com.sellerdata.pojo.vo.SellerMwsVO;
 import com.sellerdata.service.BrandService;
 import com.sellerdata.service.SellerService;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 /**
  * @author Lee
- * @date 2019-5-06
+ * @date 2019-6-06
  */
 @Api(description = "SellerHandler 卖家操作", tags = "SellerHandler")
 @RestController
@@ -58,6 +59,13 @@ public class SellerHandler {
     @PostMapping(value = "/saveSellerMwsAuth")
     public ResultBean saveSellerMwsAuth(@RequestBody SellerMwsVO sellerMwsVO) {
         ResultBean resultBean = sellerService.saveSellerMwsAuth(sellerMwsVO);
+        return resultBean;
+    }
+
+    @ApiOperation(value = "子账号接口授权")
+    @PostMapping(value = "/saveSellerAccount")
+    public ResultBean saveSellerAccount(@RequestBody AmzSellerAccountVO amzSellerAccountVO) {
+        ResultBean resultBean = sellerService.saveSellerAccount(amzSellerAccountVO);
         return resultBean;
     }
 

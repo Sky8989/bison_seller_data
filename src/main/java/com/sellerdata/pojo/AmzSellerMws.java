@@ -51,7 +51,7 @@ public class AmzSellerMws {
     }
 
     @Basic
-    @Column(name = "amz_seller_id", nullable = false, length = 200)
+    @Column(name = "amz_seller_id")
     public int getAmzSellerId() {
         return amzSellerId;
     }
@@ -60,7 +60,7 @@ public class AmzSellerMws {
     }
 
     @Basic
-    @Column(name = "region_id", nullable = false, length = 200)
+    @Column(name = "region_id")
     public int getRegionId() {
         return regionId;
     }
@@ -70,7 +70,7 @@ public class AmzSellerMws {
     }
 
     @Basic
-    @Column(name = "mws_app_name", nullable = false, length = 200)
+    @Column(name = "mws_app_name")
     public String getMwsAppName() {
         return mwsAppName;
     }
@@ -80,7 +80,7 @@ public class AmzSellerMws {
     }
 
     @Basic
-    @Column(name = "mws_auth_token", nullable = false, length = 200)
+    @Column(name = "mws_auth_token")
     public String getMwsAuthToken() {
         return mwsAuthToken;
     }
@@ -90,7 +90,7 @@ public class AmzSellerMws {
     }
 
     @Basic
-    @Column(name = "developer_id", nullable = false, length = 200)
+    @Column(name = "developer_id")
     public String getDeveloperId() {
         return developerId;
     }
@@ -100,7 +100,7 @@ public class AmzSellerMws {
     }
 
     @Basic
-    @Column(name = "secret_key", nullable = false, length = 200)
+    @Column(name = "secret_key")
     public String getSecretKey() {
         return secretKey;
     }
@@ -110,7 +110,7 @@ public class AmzSellerMws {
     }
 
     @Basic
-    @Column(name = "auth_type", nullable = false, length = 200)
+    @Column(name = "auth_type" )
     public int getAuthType() {
         return authType;
     }
@@ -120,7 +120,7 @@ public class AmzSellerMws {
     }
 
     @Basic
-    @Column(name = "utime", nullable = false)
+    @Column(name = "utime")
     public Timestamp getUtime() {
         return utime;
     }
@@ -130,7 +130,7 @@ public class AmzSellerMws {
     }
 
     @Basic
-    @Column(name = "ctime", nullable = false)
+    @Column(name = "ctime")
     public Timestamp getCtime() {
         return ctime;
     }

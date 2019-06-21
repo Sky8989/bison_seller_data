@@ -7,6 +7,7 @@ import com.sellerdata.mapper.jpa.UserMapper;
 import com.sellerdata.mapper.mybatis.SellerMapperEx;
 import com.sellerdata.pojo.AmzSellerAcount;
 import com.sellerdata.pojo.AmzSellerMws;
+import com.sellerdata.pojo.vo.AmzSellerAccountVO;
 import com.sellerdata.pojo.vo.SellerMwsVO;
 import com.sellerdata.pojo.vo.SellerVO;
 import com.sellerdata.service.SellerService;
@@ -35,8 +36,6 @@ public class SellerServiceImpl implements SellerService {
 
     @Autowired
     AmzSellerMwsMapper amzSellerMwsMapper;
-
-
 
 
     @Override
@@ -92,6 +91,7 @@ public class SellerServiceImpl implements SellerService {
         return resultBean;
     }
 
+    @Transactional
     @Override
     public ResultBean saveSellerMwsAuth(SellerMwsVO sellerMwsVO) {
         ResultBean resultBean = new ResultBean();
@@ -145,6 +145,20 @@ public class SellerServiceImpl implements SellerService {
         AmzSellerAcount amzSellerAcount = sellerMapperEx.findAmzSellerAcountBySellerId(sellerId);
 
         resultBean.setData(amzSellerAcount);
+        return resultBean;
+    }
+
+    @Override
+    public ResultBean saveSellerAccount(AmzSellerAccountVO amzSellerAccountVO) {
+        ResultBean resultBean = new ResultBean();
+
+        //校验
+
+        //保存
+
+        //修改状态
+
+
         return resultBean;
     }
 

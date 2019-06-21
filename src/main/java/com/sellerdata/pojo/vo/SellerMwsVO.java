@@ -14,7 +14,6 @@ public class SellerMwsVO {
 
     private int mwsId;
 
-
     private int  sellerId;
     private int  regionId;
     /**

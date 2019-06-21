@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace可以写类的全限定名，这样做的好处是
+　　sqlSession.insert(Student.class.getName()+".addStudent");
+-->
+<mapper namespace="com.sellerdata.mapper.mybatis.SellerMapperEx">
+
+    <select id="findSellerList" resultType="com.sellerdata.pojo.vo.SellerVO">
+    SELECT
+        b.brand_id				as brandId,
+        s.seller_id				as sellerId,
+        r.amz_region_id 		as regionId,
+        r.amz_region_code		as amzRegionCode,
+        s.mws_status			as mwsStatus,
+        s.easybison_mws_status	as easybisonMwsStatus,
+        s.sub_account_status	as subAccountStatus
+    FROM
+        bison.brand b,
+        bison.amz_seller s,
+        bison.amz_region r
+    WHERE
+        b.brand_id = s.brand_id
+        and s.amazon_region_id = r.amz_region_id
+        and b.brand_id = #{brandId}
+        and s.`status` = 1
+    </select>
+
+    <insert id="addSellerMws" useGeneratedKeys="true" keyProperty="mwsId" parameterType="com.sellerdata.pojo.vo.SellerMwsVO">
+        INSERT INTO `bison`.`amz_seller_mws`
+            (`seller_id`,`region_id`,`mws_app_name`,
+            `amz_seller_id`,`mws_auth_token`,`developer_id`
+            <if  test="accessKeyId != null and accessKeyId != '' ">
+               , `access_key_id`,
+            </if>
+             <if  test="secretKey != null and secretKey != '' ">
+                 `secret_key`
+            </if>
+
+            )
+        VALUES
+            ( #{sellerId}, #{regionId}, #{mwsAppName},#{amzSellerId},#{mwsAuthToken},#{developerId}
+
+        <if  test="accessKeyId != null and accessKeyId != '' ">
+            ,  #{accessKeyId},
+        </if>
+         <if  test="secretKey != null and secretKey != '' ">
+             #{secretKey},
+        </if>
+            )
+    </insert>
+
+    <update id="updateSellerMws" parameterType="com.sellerdata.pojo.vo.SellerMwsVO">
+    UPDATE `bison`.`amz_seller_mws`
+    SET
+        `mws_app_name` = #{mwsAppName},
+        `amz_seller_id` = #{amzSellerId},
+        `mws_auth_token` = #{mwsAuthToken},
+        `developer_id` = #{developerId},
+        <if test="accessKeyId != null and accessKeyId != '' ">
+            `access_key_id` = #{accessKeyId},
+        </if>
+        <if test="secretKey != null and secretKey != '' ">
+            `secret_key` = #{secretKey}
+        </if>
+    WHERE
+        `mws_id` = #{mwsId}
+    </update>
+
+    <update id="updateMwsStatus" parameterType="java.lang.Integer">
+        UPDATE `bison`.`amz_seller`
+        SET
+            `mws_status` = 1
+        WHERE `seller_id` = #{sellerId}
+    </update>
+
+    <update id="updateEasybisonMwsStatus" parameterType="java.lang.Integer">
+          UPDATE `bison`.`amz_seller`
+        SET
+            `easybison_mws_status` = 1
+        WHERE `seller_id` = #{sellerId}
+    </update>
+
+    <select id="findAmzSellerMwsBySellerId" parameterType="java.lang.Integer" resultType="com.sellerdata.pojo.AmzSellerMws">
+    SELECT
+        `amz_seller_mws`.`mws_id`				as mwsId,
+        `amz_seller_mws`.`seller_id`		    as sellerId,
+        `amz_seller_mws`.`region_id`		    as regionId,
+        `amz_seller_mws`.`mws_app_name`		    as mwsAppName,
+        `amz_seller_mws`.`amz_seller_id`	    as amzSellerId,
+        `amz_seller_mws`.`mws_auth_token`	    as mwsAuthToken,
+        `amz_seller_mws`.`developer_id`		    as developerId,
+        `amz_seller_mws`.`access_key_id`	    as accessKeyId,
+        `amz_seller_mws`.`secret_key`		    as secretKey,
+        `amz_seller_mws`.`auth_type`		    as authType,
+        `amz_seller_mws`.`utime`,
+        `amz_seller_mws`.`ctime`
+    FROM
+        `bison`.`amz_seller_mws`
+    where
+        seller_id = #{sellerId}
+    </select>
+
+    <select id="findAmzSellerAcountBySellerId" parameterType="java.lang.Integer" resultType="com.sellerdata.pojo.AmzSellerAcount">
+    SELECT
+    `amz_seller_account`.`account_id`				    as accountId,
+    `amz_seller_account`.`seller_id`					as sellerId,
+    `amz_seller_account`.`account_name`					as accountName,
+    `amz_seller_account`.`account_password`				as accountPassword,
+    `amz_seller_account`.`two_step_code`				as twoStepCode,
+    `amz_seller_account`.`utime`,
+    `amz_seller_account`.`ctime`,
+    `amz_seller_account`.`is_amz_adv_authorize`			as isAmzAdvAuthorize,
+    `amz_seller_account`.`remote_server`				as remoteServer,
+    `amz_seller_account`.`remote_file_port`				as remoteFilePort,
+    `amz_seller_account`.`remote_browser_port`			as remoteBrowserPort,
+    `amz_seller_account`.`amz_sellercentral_entry_id`	as amzSellercentralEntryId
+    FROM
+     `bison`.`amz_seller_account`
+    where
+        seller_id = #{sellerId}
+
+    </select>
+
+
+
+
+
+
+
+</mapper>

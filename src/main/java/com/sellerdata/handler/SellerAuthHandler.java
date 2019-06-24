@@ -16,10 +16,10 @@ import org.springframework.web.bind.annotation.*;
  * @author Lee
  * @date 2019-6-06
  */
-@Api(description = "SellerHandler 卖家操作", tags = "SellerHandler")
+@Api(description = "SellerAuthHandler 卖家操作", tags = "SellerAuthHandler")
 @RestController
-@RequestMapping("/sellerHandler")
-public class SellerHandler {
+@RequestMapping("/sellerAuthHandler")
+public class SellerAuthHandler {
 
     @Autowired
     BrandService brandService;
@@ -41,7 +41,7 @@ public class SellerHandler {
         return resultBean;
     }
 
-    @ApiOperation(value = "通过 sellerId 获取 SellerMws")
+    @ApiOperation(value = "通过 sellerId 获取 SellerAccount")
     @GetMapping(value = "/findAmzSellerAccountBySellerId/{sellerId}")
     public ResultBean findAmzSellerAccountBySellerId(@PathVariable Integer sellerId) {
         ResultBean resultBean = sellerService.findAmzSellerAccountBySellerId(sellerId);
@@ -68,6 +68,8 @@ public class SellerHandler {
         ResultBean resultBean = sellerService.saveSellerAccount(amzSellerAccountVO);
         return resultBean;
     }
+
+
 
 
 

@@ -13,6 +13,8 @@ public class AmzSellerAccountVO {
 
     private int accountId;
 
+    private int sellerId;
+
     private String accountName;
 
     private String accountPassword;
@@ -21,10 +23,18 @@ public class AmzSellerAccountVO {
 
     private String remoteServer;
 
-    private String remoteBrowserPort;
+    private int remoteBrowserPort;
 
-    private String remoteFilePort;
+    private int remoteFilePort;
 
+
+    public int getSellerId() {
+        return sellerId;
+    }
+
+    public void setSellerId(int sellerId) {
+        this.sellerId = sellerId;
+    }
 
     public int getAccountId() {
         return accountId;
@@ -66,19 +76,19 @@ public class AmzSellerAccountVO {
         this.remoteServer = remoteServer;
     }
 
-    public String getRemoteBrowserPort() {
+    public int getRemoteBrowserPort() {
         return remoteBrowserPort;
     }
 
-    public void setRemoteBrowserPort(String remoteBrowserPort) {
+    public void setRemoteBrowserPort(int remoteBrowserPort) {
         this.remoteBrowserPort = remoteBrowserPort;
     }
 
-    public String getRemoteFilePort() {
+    public int getRemoteFilePort() {
         return remoteFilePort;
     }
 
-    public void setRemoteFilePort(String remoteFilePort) {
+    public void setRemoteFilePort(int remoteFilePort) {
         this.remoteFilePort = remoteFilePort;
     }
 
@@ -86,12 +96,13 @@ public class AmzSellerAccountVO {
     public String toString() {
         final StringBuilder sb = new StringBuilder("AmzSellerAccountVO{");
         sb.append("accountId=").append(accountId);
+        sb.append(", sellerId=").append(sellerId);
         sb.append(", accountName='").append(accountName).append('\'');
         sb.append(", accountPassword='").append(accountPassword).append('\'');
         sb.append(", twoStepCode='").append(twoStepCode).append('\'');
         sb.append(", remoteServer='").append(remoteServer).append('\'');
-        sb.append(", remoteBrowserPort='").append(remoteBrowserPort).append('\'');
-        sb.append(", remoteFilePort='").append(remoteFilePort).append('\'');
+        sb.append(", remoteBrowserPort=").append(remoteBrowserPort);
+        sb.append(", remoteFilePort=").append(remoteFilePort);
         sb.append('}');
         return sb.toString();
     }

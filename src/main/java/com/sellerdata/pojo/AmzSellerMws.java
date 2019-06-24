@@ -16,15 +16,16 @@ import java.util.Objects;
 public class AmzSellerMws {
     private int mwsId;
     private int sellerId;
-
-    private int amzSellerId;
-
     private int regionId;
+
+
     private String mwsAppName;
+    private String amzSellerId;
 
     private String mwsAuthToken;
     private String developerId;
     private String secretKey;
+    private String accessKeyId;
     private int authType;
 
 
@@ -52,11 +53,24 @@ public class AmzSellerMws {
 
     @Basic
     @Column(name = "amz_seller_id")
-    public int getAmzSellerId() {
+    public String getAmzSellerId() {
         return amzSellerId;
     }
-    public void setAmzSellerId(int amzSellerId) {
+
+
+    public void setAmzSellerId(String amzSellerId) {
         this.amzSellerId = amzSellerId;
+    }
+
+
+    @Basic
+    @Column(name = "access_key_id")
+    public String getAccessKeyId() {
+        return accessKeyId;
+    }
+
+    public void setAccessKeyId(String accessKeyId) {
+        this.accessKeyId = accessKeyId;
     }
 
     @Basic

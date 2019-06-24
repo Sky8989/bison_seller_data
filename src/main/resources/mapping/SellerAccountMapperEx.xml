@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace可以写类的全限定名，这样做的好处是
+　　sqlSession.insert(Student.class.getName()+".addStudent");
+-->
+<mapper namespace="com.sellerdata.mapper.mybatis.SellerAccountMapperEx">
+
+    <insert id="addSellerAccount" useGeneratedKeys="true" keyProperty="accountId" parameterType="com.sellerdata.pojo.vo.AmzSellerAccountVO">
+    INSERT INTO
+        `bison`.`amz_seller_account`
+        (
+            `seller_id`,
+            `account_name`,
+            `account_password`,
+            `two_step_code`,
+            `remote_server`,
+            `remote_file_port`,
+            `remote_browser_port`
+        )
+    VALUES
+        (
+            #{sellerId},
+            #{accountName},
+            #{accountPassword},
+            #{twoStepCode},
+            #{remoteServer},
+            #{remoteFilePort},
+            #{remoteBrowserPort}
+        )
+    </insert>
+
+    <update id="updateSellerAccount" parameterType="com.sellerdata.pojo.vo.AmzSellerAccountVO">
+    UPDATE
+        `bison`.`amz_seller_account`
+    SET
+        `account_name` = #{accountName},
+        `account_password` = #{accountPassword},
+        `two_step_code` = #{twoStepCode},
+        `utime` = Now(),
+        `remote_server` = #{remoteServer},
+        `remote_file_port` = #{remoteFilePort},
+        `remote_browser_port` = #{remoteBrowserPort}
+    WHERE
+        `account_id` = #{accountId}
+    </update>
+
+
+
+</mapper>

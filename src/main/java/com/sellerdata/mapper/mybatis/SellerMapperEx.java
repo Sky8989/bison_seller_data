@@ -3,13 +3,13 @@ package com.sellerdata.mapper.mybatis;
 
 import com.sellerdata.pojo.AmzSellerAcount;
 import com.sellerdata.pojo.AmzSellerMws;
+import com.sellerdata.pojo.vo.DataModuleVO;
 import com.sellerdata.pojo.vo.SellerMwsVO;
 import com.sellerdata.pojo.vo.SellerVO;
 
 import java.util.List;
 
 public interface SellerMapperEx {
-
 
     List<SellerVO> findSellerList(Integer brandId);
 
@@ -26,4 +26,8 @@ public interface SellerMapperEx {
     AmzSellerMws findAmzSellerMwsBySellerId(Integer sellerId);
 
     AmzSellerAcount findAmzSellerAcountBySellerId(Integer sellerId);
+
+    int updateSubAccountStatus(int sellerId);
+
+    List<DataModuleVO> findDataModuleList(Integer brandId);
 }

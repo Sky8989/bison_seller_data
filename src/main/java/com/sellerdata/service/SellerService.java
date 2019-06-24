@@ -18,4 +18,6 @@ public interface SellerService {
     ResultBean findAmzSellerAccountBySellerId(Integer sellerId);
 
     ResultBean saveSellerAccount(AmzSellerAccountVO amzSellerAccountVO);
+
+    ResultBean findAmzSellerMwsBySellerId(Integer sellerId);
 }

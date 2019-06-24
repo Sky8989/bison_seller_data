@@ -24,6 +24,7 @@
         and s.amazon_region_id = r.amz_region_id
         and b.brand_id = #{brandId}
         and s.`status` = 1
+        and r.region_status = 1
     </select>
 
     <insert id="addSellerMws" useGeneratedKeys="true" keyProperty="mwsId" parameterType="com.sellerdata.pojo.vo.SellerMwsVO">
@@ -81,6 +82,14 @@
         WHERE `seller_id` = #{sellerId}
     </update>
 
+
+    <update id="updateSubAccountStatus" parameterType="java.lang.Integer">
+        UPDATE `bison`.`amz_seller`
+        SET
+            `sub_account_status` = 1
+        WHERE `seller_id` = #{sellerId}
+    </update>
+
     <select id="findAmzSellerMwsBySellerId" parameterType="java.lang.Integer" resultType="com.sellerdata.pojo.AmzSellerMws">
     SELECT
         `amz_seller_mws`.`mws_id`				as mwsId,
@@ -121,5 +130,53 @@
         seller_id = #{sellerId}
 
     </select>
+
+
+    <select id="findDataModuleList" parameterType="java.lang.Integer" resultType="com.sellerdata.pojo.vo.DataModuleVO">
+    select
+        t1.moduleName,
+        t1.lastExecuteTime,
+        t1.subscribeStatus,
+        t1.subscribeId,
+        mes.status_comment		as statusComment,
+        ar.amz_region_id	as amzRegionId
+
+    from
+        (
+            SELECT
+            m.module_name				as moduleName,
+            ms.subscribe_status			as subscribeStatus,
+            ms.last_execute_time		as lastExecuteTime,
+            ms.mws_id,
+            ms.last_execute_status_id,
+            ms.subscribe_id				as subscribeId
+            FROM
+            bison.module m
+            left join
+            bison.module_subscribe ms
+            on
+            m.module_id = ms.module_id
+            and ms.seller_id  = #{sellerId}
+            group by
+             m.module_id,
+             ms.subscribe_id
+        ) t1
+
+    left join
+        bison.module_excute_status mes
+    on
+        t1.last_execute_status_id = mes.excute_status_id
+    left join
+        bison.amz_seller_mws  asm
+        on
+        t1.mws_id = asm.mws_id
+    left join
+        bison.amz_region ar
+        on
+        asm.region_id = ar.amz_region_id
+
+
+    </select>
+
 
 </mapper>

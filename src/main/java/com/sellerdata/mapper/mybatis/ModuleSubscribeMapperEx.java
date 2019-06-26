@@ -14,4 +14,6 @@ public interface ModuleSubscribeMapperEx {
     Integer isExistModuleSubscribeByMwsId(int mwsId);
 
     void addModuleSubscribe(ModuleSubscribe moduleSubscribe);
+
+    Integer isExistModuleSubscribeByAccount(int accountId);
 }

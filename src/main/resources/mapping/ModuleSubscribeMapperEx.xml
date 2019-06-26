@@ -118,6 +118,15 @@
             mws_id = #{mwsId}
     </select>
 
+    <select id="isExistModuleSubscribeByAccount" resultType="java.lang.Integer">
+         SELECT
+           count(1)
+        FROM
+            bison.module_subscribe
+        where
+            account_id = #{accountId}
+    </select>
+
 
 
 

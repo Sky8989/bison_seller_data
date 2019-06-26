@@ -75,6 +75,8 @@ public class SellerServiceImpl implements SellerService {
             return resultBean;
         }
 
+      //  int sellerId = sellerMwsVO.getSellerId(); 前端传入的sellerId用来改变 amz_seller对应的状态
+
         int mwsId = sellerMwsVO.getMwsId();
         //1:先保存
         if(mwsId == 0){
@@ -108,11 +110,11 @@ public class SellerServiceImpl implements SellerService {
                     moduleSubscribe.setSellerId(sellerMwsVO.getSellerId());
 
                     //判断 是否已存在 moduleSubscribe
-                    boolean flag1 = isExistModuleSubscribeByMwsId(sellerMwsVO.getMwsId());
+                 /*   boolean flag1 = isExistModuleSubscribeByMwsId(sellerMwsVO.getMwsId());
                     System.out.println("=== flag1 ===" + flag1);
-                    if(!flag1){
+                    if(!flag1){*/
                         moduleSubscribeMapperEx.addModuleSubscribe(moduleSubscribe);
-                    }
+                  //  }
                 }
             }
             else{
@@ -164,7 +166,6 @@ public class SellerServiceImpl implements SellerService {
         //1:先保存
         if(mwsId == 0){
             //新增
-
             sellerMapperEx.addSellerMws(sellerMwsVO);
             sellerMwsVO.setMwsId(sellerMwsVO.getMwsId());
 
@@ -175,24 +176,28 @@ public class SellerServiceImpl implements SellerService {
             if(!flag){
                 //1.2不存在 进行新增 module_subscribe
                 //通过 module_type 查询 module 列表
-                List<Integer> moduleIdList = moduleMapperEx.findModuleIdListByModuleType(1);
+                // List<Integer> moduleIdList = moduleMapperEx.findModuleIdListByModuleType(1);
+                List<Module> moduleList = moduleMapperEx.findModuleListByModuleType(1);
 
-                if(moduleIdList == null || moduleIdList.size() == 0){
+                if(moduleList == null || moduleList.size() == 0){
                     resultBean.setMsg("不存在对应模块,新增失败");
                     resultBean.setCode(500);
                     return resultBean;
                 }
-
-
                 ModuleSubscribe moduleSubscribe = new ModuleSubscribe();
 
-                for(Integer moduleId : moduleIdList){
-                    moduleSubscribe.setModuleId(moduleId);
+                for(Module module : moduleList){
+                    moduleSubscribe.setModuleId(module.getModuleId());
+                    moduleSubscribe.setModuleSettings(module.getDefaultSetting());
                     moduleSubscribe.setMwsId(sellerMwsVO.getMwsId());
                     moduleSubscribe.setSellerId(sellerMwsVO.getSellerId());
 
-                    //新增 module_subscribe
+                    //判断 是否已存在 moduleSubscribe
+                 /*   boolean flag1 = isExistModuleSubscribeByMwsId(sellerMwsVO.getMwsId());
+                    System.out.println("=== flag1 ===" + flag1);
+                    if(!flag1){*/
                     moduleSubscribeMapperEx.addModuleSubscribe(moduleSubscribe);
+                    //  }
                 }
             }
             else{
@@ -271,7 +276,35 @@ public class SellerServiceImpl implements SellerService {
         if(accountId == 0){
             //新增
             sellerAccountMapperEx.addSellerAccount(amzSellerAccountVO);
+           // amzSellerAccountVO.setAccountId(amzSellerAccountVO.getAccountId());
 
+            //1.1:判断是否存在对应 module_subscribe
+            boolean flag = isExistModuleSubscribeByAccount(amzSellerAccountVO.getAccountId());
+
+            if(!flag){
+                //1.2不存在 进行新增
+            List<Module> moduleList = moduleMapperEx.findModuleListByModuleType(2);
+
+            if(moduleList == null || moduleList.size() == 0){
+                    resultBean.setCode(500);
+                    resultBean.setMsg("不存在对应的模块！");
+                return resultBean;
+            }
+            ModuleSubscribe moduleSubscribe = new ModuleSubscribe();
+
+            for(Module module : moduleList){
+                moduleSubscribe.setModuleId(module.getModuleId());
+                moduleSubscribe.setModuleSettings(module.getDefaultSetting());
+                moduleSubscribe.setAccountId(amzSellerAccountVO.getAccountId());
+                moduleSubscribe.setSellerId(amzSellerAccountVO.getSellerId());
+
+                moduleSubscribeMapperEx.addModuleSubscribe(moduleSubscribe);
+
+            }
+
+            }else{
+                //1.3存在 不进行操作
+            }
         }else if(accountId > 0){
             //修改
             sellerAccountMapperEx.updateSellerAccount(amzSellerAccountVO);
@@ -292,6 +325,15 @@ public class SellerServiceImpl implements SellerService {
         return resultBean;
     }
 
+    private boolean isExistModuleSubscribeByAccount(int accountId) {
+        boolean flag = false;
+        Integer num = moduleSubscribeMapperEx.isExistModuleSubscribeByAccount(accountId);
+        if(num != null && num > 0){
+            flag = true;
+        }
+        return flag;
+    }
+
     /**
      * 校验 SellerAccount 数据是否正确
      * @param amzSellerAccountVO
@@ -305,6 +347,7 @@ public class SellerServiceImpl implements SellerService {
             resultBean.setMsg("传入的数据为空保存失败");
             return resultBean;
         }
+
         if(StringUtils.isEmpty(amzSellerAccountVO.getAccountName())){
             resultBean.setCode(500);
             resultBean.setMsg("账号名为空");
@@ -335,8 +378,6 @@ public class SellerServiceImpl implements SellerService {
             resultBean.setMsg("传输为空或非法");
             return resultBean;
         }
-
-
         return resultBean;
     }
 

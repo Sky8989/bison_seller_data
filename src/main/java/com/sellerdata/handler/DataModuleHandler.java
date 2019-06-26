@@ -37,6 +37,35 @@ public class DataModuleHandler {
     }
 
 
+    @ApiOperation(value = "获取 数据模块列表")
+    @GetMapping(value = "/getAmzRegionVOList")
+    public ResultBean getAmzRegionVOList() {
+        ResultBean resultBean = dataModuleService.getAmzRegionVOList();
+        return resultBean;
+    }
+
+    @ApiOperation(value = "获取 模块执行状态 列表")
+    @GetMapping(value = "/getModuleExcuteStatusList")
+    public ResultBean getModuleExcuteStatusList() {
+        ResultBean resultBean = dataModuleService.getModuleExcuteStatusList();
+        return resultBean;
+    }
+
+    @ApiOperation(value = "修改状态 subscribe_status")
+    @PutMapping(value = "/updateSubscribeStatus")
+    public ResultBean updateSubscribeStatus(@RequestParam("subscribeId") Integer subscribeId,@RequestParam("status") Integer status) {
+        System.out.println("subscribeId = " + subscribeId);
+        System.out.println("status = " + status);
+        ResultBean resultBean = dataModuleService.updateSubscribeStatus(subscribeId,status);
+        return resultBean;
+    }
+
+
+
+
+
+
+
 
 
 

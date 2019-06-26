@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace可以写类的全限定名，这样做的好处是
+　　sqlSession.insert(Student.class.getName()+".addStudent");
+-->
+<mapper namespace="com.sellerdata.mapper.mybatis.ModuleSubscribeMapperEx">
+
+    <update id="updateSubscribeStatus" >
+        UPDATE
+            `bison`.`module_subscribe`
+        SET
+            `subscribe_status` =  #{subscribeStatus}
+        WHERE
+            `subscribe_id` = #{subscribeId}
+    </update>
+
+    <update id="updateLastExecuteStatusId" >
+        UPDATE
+            `bison`.`module_subscribe`
+        SET
+            `last_execute_status_id` =  #{lastExecuteStatusId}
+        WHERE
+            `subscribe_id` = #{subscribeId}
+    </update>
+
+
+    <insert id="addModuleSubscribe" useGeneratedKeys="true" keyProperty="subscribeId" parameterType="com.sellerdata.pojo.ModuleSubscribe">
+        INSERT INTO
+        `bison`.`module_subscribe`
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+        <if test="moduleId != null and moduleId != 0">
+            `module_id`,
+        </if>
+        <if test="sellerId != null and sellerId != 0">
+            `seller_id`,
+        </if>
+        <if test="accountId != null and accountId != 0">
+            `account_id`,
+        </if>
+        <if test="mwsId != null and mwsId != 0">
+            `mws_id`,
+        </if>
+        <if test="subscribeStatus != null and subscribeStatus != 0">
+            `subscribe_status`,
+        </if>
+        <if test="moduleServerUrl != null and moduleServerUrl != ''">
+            `module_server_url`,
+        </if>
+        <if test="moduleSettings != null and moduleSettings != ''">
+            `module_settings`,
+        </if>
+        <if test="cornExpressoin != null and cornExpressoin != ''">
+            `corn_expressoin`,
+        </if>
+
+        <if test="lastExecuteStatusId != null and lastExecuteStatusId != 0">
+            `last_execute_status_id`,
+        </if>
+        <if test="lastExecuteTime != null ">
+            `last_execute_time`,
+        </if>
+        <if test="lastFinishTime != null ">
+            `last_finish_time`,
+        </if>
+        <if test="utime != null">
+            `utime`
+        </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+        <if test="moduleId != null and moduleId != 0">
+            #{moduleId},
+        </if>
+
+        <if test="sellerId != null and sellerId != 0">
+            #{sellerId},
+        </if>
+        <if test="accountId != null and accountId != 0">
+            #{accountId},
+        </if>
+        <if test="mwsId != null and mwsId != 0">
+            #{mwsId},
+        </if>
+        <if test="subscribeStatus != null and subscribeStatus != 0">
+            #{subscribeStatus},
+        </if>
+        <if test="moduleServerUrl != null and moduleServerUrl != ''">
+            #{moduleServerUrl},
+        </if>
+        <if test="moduleSettings != null and moduleSettings != ''">
+            #{moduleSettings},
+        </if>
+        <if test="cornExpressoin != null and cornExpressoin != ''">
+            #{cornExpressoin},
+        </if>
+        <if test="lastExecuteStatusId != null and lastExecuteStatusId != 0">
+            #{lastExecuteStatusId},
+        </if>
+        <if test="lastExecuteTime != null ">
+            #{lastExecuteTime},
+        </if>
+        <if test="lastFinishTime != null ">
+            #{lastFinishTime},
+        </if>
+        <if test="utime != null">
+            #{utime}
+        </if>
+        </trim>
+
+    </insert>
+
+    <select id="isExistModuleSubscribeByMwsId" resultType="java.lang.Integer">
+        SELECT
+           count(1)
+        FROM
+            bison.module_subscribe
+        where
+            mws_id = #{mwsId}
+    </select>
+
+
+
+
+</mapper>

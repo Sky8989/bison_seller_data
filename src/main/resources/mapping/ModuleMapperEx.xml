@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace可以写类的全限定名，这样做的好处是
+　　sqlSession.insert(Student.class.getName()+".addStudent");
+-->
+<mapper namespace="com.sellerdata.mapper.mybatis.ModuleMapperEx">
+
+
+    <select id="findModuleIdListByModuleType" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+        SELECT
+            module_id
+        FROM
+            bison.module
+        where
+            module_type = #{moduleType}
+    </select>
+
+    <select id="findModuleListByModuleType" resultType="com.sellerdata.pojo.Module" parameterType="java.lang.Integer">
+    SELECT
+        `module`.`module_id`		as moduleId,
+        `module`.`module_name`		as moduleName,
+        `module`.`module_url_path`	as moduleUrlPath ,
+        `module`.`utime`,
+        `module`.`ctime`,
+        `module`.`module_type`		as moduleType,
+        `module`.`module_port`		as modulePort,
+        `module`.`default_setting`	as defaultSetting
+        FROM
+            bison.module
+        where
+            module_type = #{moduleType}
+    </select>
+
+
+</mapper>

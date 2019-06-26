@@ -28,11 +28,17 @@
     </select>
 
     <insert id="addSellerMws" useGeneratedKeys="true" keyProperty="mwsId" parameterType="com.sellerdata.pojo.vo.SellerMwsVO">
-        INSERT INTO `bison`.`amz_seller_mws`
-            (`seller_id`,`region_id`,`mws_app_name`,
-            `amz_seller_id`,`mws_auth_token`,`developer_id`
+        INSERT INTO
+         `bison`.`amz_seller_mws`
+            (
+            `seller_id`,
+            `region_id`,
+            `mws_app_name`,
+            `amz_seller_id`,
+            `mws_auth_token`,
+            `developer_id`
             <if  test="accessKeyId != null and accessKeyId != '' ">
-               , `access_key_id`,
+               ,`access_key_id`,
             </if>
              <if  test="secretKey != null and secretKey != '' ">
                  `secret_key`
@@ -40,13 +46,18 @@
 
             )
         VALUES
-            ( #{sellerId}, #{regionId}, #{mwsAppName},#{amzSellerId},#{mwsAuthToken},#{developerId}
-
+            (
+              #{sellerId},
+              #{regionId},
+              #{mwsAppName},
+              #{amzSellerId},
+              #{mwsAuthToken},
+              #{developerId}
         <if  test="accessKeyId != null and accessKeyId != '' ">
-            ,  #{accessKeyId},
+              ,#{accessKeyId},
         </if>
          <if  test="secretKey != null and secretKey != '' ">
-             #{secretKey},
+              #{secretKey}
         </if>
             )
     </insert>
@@ -133,49 +144,71 @@
 
 
     <select id="findDataModuleList" parameterType="java.lang.Integer" resultType="com.sellerdata.pojo.vo.DataModuleVO">
+    SELECT
+        m.module_id								                as moduleId,
+        m.module_name								            as moduleName,
+        group_concat(ms.subscribe_id)			                as subscribeIdStr
+    FROM
+	    bison.module m
+	inner join
+	    bison.module_subscribe ms
+	on
+	    m.module_id = ms.module_id
+	and
+	    ms.seller_id  in (
+							SELECT
+								se.seller_id
+							FROM
+								bison.brand b
+							left join
+								bison.amz_seller  se
+							on
+                                b.brand_id = se.brand_id
+							left join
+								bison.amz_region ar
+							on
+								ar.amz_region_id = se.amazon_region_id
+							where
+								ar.region_status = 1
+								and se.brand_id = #{brandId}
+							)
+    group by
+	    m.module_id
+
+    </select>
+
+
+    <select id="findModuleSubscribeVOList" resultType="com.sellerdata.pojo.vo.ModuleSubscribeVO" parameterType="java.lang.String">
     select
-        t1.moduleName,
-        t1.lastExecuteTime,
-        t1.subscribeStatus,
-        t1.subscribeId,
-        mes.status_comment		as statusComment,
-        ar.amz_region_id	as amzRegionId
-
+        se.amazon_region_id						as amzRegionId,
+        ms.subscribe_id							as subscribeId,
+        ms.subscribe_status						as subscribeStatus,
+        ms.last_execute_status_id				as lastExecuteStatusId,
+        ms.last_execute_time					as lastExecuteTime
     from
-        (
-            SELECT
-            m.module_name				as moduleName,
-            ms.subscribe_status			as subscribeStatus,
-            ms.last_execute_time		as lastExecuteTime,
-            ms.mws_id,
-            ms.last_execute_status_id,
-            ms.subscribe_id				as subscribeId
-            FROM
-            bison.module m
-            left join
-            bison.module_subscribe ms
-            on
-            m.module_id = ms.module_id
-            and ms.seller_id  = #{sellerId}
-            group by
-             m.module_id,
-             ms.subscribe_id
-        ) t1
-
+        bison.amz_seller  se
     left join
-        bison.module_excute_status mes
+        bison.module_subscribe ms
     on
-        t1.last_execute_status_id = mes.excute_status_id
-    left join
-        bison.amz_seller_mws  asm
-        on
-        t1.mws_id = asm.mws_id
-    left join
-        bison.amz_region ar
-        on
-        asm.region_id = ar.amz_region_id
+	    ms.seller_id = se.seller_id
+    where
+		ms.subscribe_id in
+		<if test="subscribeIdList != null and subscribeIdList.size() > 0">
+            <foreach collection="subscribeIdList" item="subscribeId" open="(" close=")" separator=",">
+                #{subscribeId}
+            </foreach>
+        </if>
+    </select>
 
-
+    <select id="findByAmzSellerId" resultType="com.sellerdata.pojo.AmzSeller">
+        SELECT
+         seller_id              as sellerId,
+        amz_seller_id           as amzSellerId,
+         amazon_region_id       as amazonRegionId
+        FROM
+            bison.amz_seller
+        where
+        amz_seller_id = #{amzSellerId}
     </select>
 
 

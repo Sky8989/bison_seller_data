@@ -4,10 +4,11 @@ import com.sellerdata.mapper.jpa.AmzSellerMapper;
 import com.sellerdata.mapper.jpa.AmzSellerMwsMapper;
 import com.sellerdata.mapper.jpa.BrandMapper;
 import com.sellerdata.mapper.jpa.UserMapper;
+import com.sellerdata.mapper.mybatis.ModuleMapperEx;
+import com.sellerdata.mapper.mybatis.ModuleSubscribeMapperEx;
 import com.sellerdata.mapper.mybatis.SellerAccountMapperEx;
 import com.sellerdata.mapper.mybatis.SellerMapperEx;
-import com.sellerdata.pojo.AmzSellerAcount;
-import com.sellerdata.pojo.AmzSellerMws;
+import com.sellerdata.pojo.*;
 import com.sellerdata.pojo.vo.AmzSellerAccountVO;
 import com.sellerdata.pojo.vo.SellerMwsVO;
 import com.sellerdata.pojo.vo.SellerVO;
@@ -41,6 +42,12 @@ public class SellerServiceImpl implements SellerService {
     @Autowired
     SellerAccountMapperEx sellerAccountMapperEx;
 
+    @Autowired
+    ModuleSubscribeMapperEx moduleSubscribeMapperEx;
+
+    @Autowired
+    ModuleMapperEx moduleMapperEx;
+
 
     @Override
     public ResultBean findSellerList(Integer brandId) {
@@ -73,7 +80,44 @@ public class SellerServiceImpl implements SellerService {
         if(mwsId == 0){
             //新增
             sellerMapperEx.addSellerMws(sellerMwsVO);
-             sellerMwsVO.getMwsId();
+            sellerMwsVO.setMwsId(sellerMwsVO.getMwsId());
+
+            //1.1:判断是否存在对应 module_subscribe
+            boolean flag = isExistModuleSubscribeByMwsId(sellerMwsVO.getMwsId());
+            System.out.println("=== flag ===" + flag);
+
+            if(!flag){
+                //1.2不存在 进行新增 module_subscribe
+                //通过 module_type 查询 module 列表
+               // List<Integer> moduleIdList = moduleMapperEx.findModuleIdListByModuleType(1);
+                List<Module> moduleList = moduleMapperEx.findModuleListByModuleType(1);
+
+                if(moduleList == null || moduleList.size() == 0){
+                    resultBean.setMsg("不存在对应模块,新增失败");
+                    resultBean.setCode(500);
+                    return resultBean;
+                }
+
+
+                ModuleSubscribe moduleSubscribe = new ModuleSubscribe();
+
+                for(Module module : moduleList){
+                    moduleSubscribe.setModuleId(module.getModuleId());
+                    moduleSubscribe.setModuleSettings(module.getDefaultSetting());
+                    moduleSubscribe.setMwsId(sellerMwsVO.getMwsId());
+                    moduleSubscribe.setSellerId(sellerMwsVO.getSellerId());
+
+                    //判断 是否已存在 moduleSubscribe
+                    boolean flag1 = isExistModuleSubscribeByMwsId(sellerMwsVO.getMwsId());
+                    System.out.println("=== flag1 ===" + flag1);
+                    if(!flag1){
+                        moduleSubscribeMapperEx.addModuleSubscribe(moduleSubscribe);
+                    }
+                }
+            }
+            else{
+                //1.3 存在 无操作
+            }
 
         }else if(mwsId > 0){
             //修改
@@ -85,6 +129,7 @@ public class SellerServiceImpl implements SellerService {
 
         int num = sellerMapperEx.updateMwsStatus(sellerId);
 
+
         if(num > 0){
             resultBean.setMsg("保存成功");
 
@@ -93,6 +138,17 @@ public class SellerServiceImpl implements SellerService {
             resultBean.setMsg("保存失败");
         }
         return resultBean;
+    }
+
+    private boolean isExistModuleSubscribeByMwsId(int mwsId) {
+        boolean result = false;
+       Integer num =  moduleSubscribeMapperEx.isExistModuleSubscribeByMwsId(mwsId);
+        if(num  != null && num > 0){
+            result = true;
+        }
+
+        return result;
+
     }
 
     @Transactional
@@ -108,8 +164,40 @@ public class SellerServiceImpl implements SellerService {
         //1:先保存
         if(mwsId == 0){
             //新增
+
             sellerMapperEx.addSellerMws(sellerMwsVO);
-            sellerMwsVO.getMwsId();
+            sellerMwsVO.setMwsId(sellerMwsVO.getMwsId());
+
+            //1.1:判断是否存在对应 module_subscribe
+            boolean flag = isExistModuleSubscribeByMwsId(sellerMwsVO.getMwsId());
+            System.out.println("=== flag ===" + flag);
+
+            if(!flag){
+                //1.2不存在 进行新增 module_subscribe
+                //通过 module_type 查询 module 列表
+                List<Integer> moduleIdList = moduleMapperEx.findModuleIdListByModuleType(1);
+
+                if(moduleIdList == null || moduleIdList.size() == 0){
+                    resultBean.setMsg("不存在对应模块,新增失败");
+                    resultBean.setCode(500);
+                    return resultBean;
+                }
+
+
+                ModuleSubscribe moduleSubscribe = new ModuleSubscribe();
+
+                for(Integer moduleId : moduleIdList){
+                    moduleSubscribe.setModuleId(moduleId);
+                    moduleSubscribe.setMwsId(sellerMwsVO.getMwsId());
+                    moduleSubscribe.setSellerId(sellerMwsVO.getSellerId());
+
+                    //新增 module_subscribe
+                    moduleSubscribeMapperEx.addModuleSubscribe(moduleSubscribe);
+                }
+            }
+            else{
+                //1.3 存在 无操作
+            }
 
         }else if(mwsId > 0){
             //修改
@@ -274,6 +362,16 @@ public class SellerServiceImpl implements SellerService {
             return resultBean;
         }
 
+    AmzSeller amzSeller =  sellerMapperEx.findByAmzSellerId(sellerMwsVO.getAmzSellerId());
+        if(amzSeller != null ){
+            sellerMwsVO.setSellerId(amzSeller.getSellerId());
+            sellerMwsVO.setRegionId(amzSeller.getAmazonRegionId());
+        }else{
+            resultBean.setCode(500);
+            resultBean.setMsg("Merchant Token输入错误,没有与之对应的Seller");
+            return resultBean;
+        }
+
         if(sellerMwsVO.getSellerId() == 0){
             resultBean.setCode(500);
             resultBean.setMsg("账号为空");
@@ -324,6 +422,16 @@ public class SellerServiceImpl implements SellerService {
             return resultBean;
         }
 
+        AmzSeller amzSeller =  sellerMapperEx.findByAmzSellerId(sellerMwsVO.getAmzSellerId());
+        if(amzSeller != null ){
+            sellerMwsVO.setSellerId(amzSeller.getSellerId());
+            sellerMwsVO.setRegionId(amzSeller.getAmazonRegionId());
+        }else{
+            resultBean.setCode(500);
+            resultBean.setMsg("Merchant Token输入错误,没有与之对应的Seller");
+            return resultBean;
+        }
+
         if(sellerMwsVO.getSellerId() == 0){
             resultBean.setCode(500);
             resultBean.setMsg("账号为空");
@@ -338,11 +446,6 @@ public class SellerServiceImpl implements SellerService {
         if(StringUtils.isEmpty(sellerMwsVO.getMwsAppName())){
             resultBean.setCode(500);
             resultBean.setMsg("应用名称为空");
-            return resultBean;
-
-        }if(StringUtils.isEmpty(sellerMwsVO.getDeveloperId())){
-            resultBean.setCode(500);
-            resultBean.setMsg("DeveloperID为空");
             return resultBean;
 
         }if(StringUtils.isEmpty(sellerMwsVO.getAmzSellerId())){

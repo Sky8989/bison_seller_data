@@ -1,13 +1,13 @@
 package com.sellerdata.pojo.vo;
 
-
-import java.sql.Timestamp;
+import java.util.List;
+import java.util.Map;
 
 /**
- * @ClassName AmzSeller
+ * @ClassName DataModuleVO
  * @Description TODO
- * @Author peter
- * @Date 19-4-8 上午10:02
+ * @Author Lee
+ * @Date 19-6-28 上午10:02
  * @Version 1.0
  **/
 
@@ -22,24 +22,16 @@ public class DataModuleVO {
 
 
     /**
-     *module_subscribe 的状态
+     *账号和执行表的状态和关系表 id 列表
      */
-    private int subscribeStatus;
-
+    private String subscribeIdStr;
 
     /**
-     *账号和执行表的状态和关系表 id
+     *
+     * ModuleSubscribeVO
      */
-    private int subscribeId;
+    private List<ModuleSubscribeVO> moduleSubscribeVOList;
 
-
-
-    private Timestamp lastExecuteTime;
-
-    /**
-     * 区域id
-     */
-    private int amzRegionId;
 
     public int getModuleId() {
         return moduleId;
@@ -57,36 +49,20 @@ public class DataModuleVO {
         this.moduleName = moduleName;
     }
 
-    public int getSubscribeStatus() {
-        return subscribeStatus;
+    public String getSubscribeIdStr() {
+        return subscribeIdStr;
     }
 
-    public void setSubscribeStatus(int subscribeStatus) {
-        this.subscribeStatus = subscribeStatus;
+    public void setSubscribeIdStr(String subscribeIdStr) {
+        this.subscribeIdStr = subscribeIdStr;
     }
 
-    public int getSubscribeId() {
-        return subscribeId;
+    public List<ModuleSubscribeVO> getModuleSubscribeVOList() {
+        return moduleSubscribeVOList;
     }
 
-    public void setSubscribeId(int subscribeId) {
-        this.subscribeId = subscribeId;
-    }
-
-    public Timestamp getLastExecuteTime() {
-        return lastExecuteTime;
-    }
-
-    public void setLastExecuteTime(Timestamp lastExecuteTime) {
-        this.lastExecuteTime = lastExecuteTime;
-    }
-
-    public int getAmzRegionId() {
-        return amzRegionId;
-    }
-
-    public void setAmzRegionId(int amzRegionId) {
-        this.amzRegionId = amzRegionId;
+    public void setModuleSubscribeVOList(List<ModuleSubscribeVO> moduleSubscribeVOList) {
+        this.moduleSubscribeVOList = moduleSubscribeVOList;
     }
 
     @Override
@@ -94,10 +70,8 @@ public class DataModuleVO {
         final StringBuilder sb = new StringBuilder("DataModuleVO{");
         sb.append("moduleId=").append(moduleId);
         sb.append(", moduleName='").append(moduleName).append('\'');
-        sb.append(", subscribeStatus=").append(subscribeStatus);
-        sb.append(", subscribeId=").append(subscribeId);
-        sb.append(", lastExecuteTime=").append(lastExecuteTime);
-        sb.append(", amzRegionId=").append(amzRegionId);
+        sb.append(", subscribeIdStr='").append(subscribeIdStr).append('\'');
+        sb.append(", moduleSubscribeVOList=").append(moduleSubscribeVOList);
         sb.append('}');
         return sb.toString();
     }
